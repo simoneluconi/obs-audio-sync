@@ -1,0 +1,18 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+.venv/
+venv/
+build/
+dist/
+
+# Local app config (contains the OBS websocket password) — never commit this.
+config.json
+
+# Editor/OS
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+.DS_Store
