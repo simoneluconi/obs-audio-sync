@@ -29,7 +29,7 @@ It listens to each track's audio, estimates the relative delay between them, and
 ## Installation
 
 ```powershell
-git clone <this-repo-url>
+git clone https://github.com/simoneluconi/obs-audio-sync.git
 cd obs-audio-sync
 python -m venv .venv
 .venv\Scripts\activate
