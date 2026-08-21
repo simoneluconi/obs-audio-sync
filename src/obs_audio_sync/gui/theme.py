@@ -49,6 +49,25 @@ QHeaderView::section {
 QRadioButton, QCheckBox {
     spacing: 6px;
 }
+QCheckBox::indicator, QRadioButton::indicator {
+    width: 14px;
+    height: 14px;
+    border: 1px solid #3a3f47;
+    background-color: #2a2e35;
+}
+QCheckBox::indicator {
+    border-radius: 3px;
+}
+QRadioButton::indicator {
+    border-radius: 7px;
+}
+QCheckBox::indicator:checked, QRadioButton::indicator:checked {
+    background-color: #5b8cff;
+    border: 1px solid #5b8cff;
+}
+QCheckBox::indicator:hover, QRadioButton::indicator:hover {
+    border: 1px solid #5b8cff;
+}
 QLabel {
     color: #e6e6e6;
 }

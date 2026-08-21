@@ -54,7 +54,8 @@ class MainWindow(QMainWindow):
     def __init__(self, config_store: ConfigStore | None = None):
         super().__init__()
         self.setWindowTitle("OBS Audio Sync")
-        self.resize(1000, 800)
+        self.resize(1200, 900)
+        self.setMinimumSize(900, 700)
 
         self._thread_pool = QThreadPool.globalInstance()
         self._config_store = config_store or ConfigStore()
@@ -102,10 +103,10 @@ class MainWindow(QMainWindow):
         central = QWidget()
         layout = QVBoxLayout(central)
         layout.addWidget(self.connection_panel)
-        layout.addWidget(self.tracks_panel, stretch=1)
+        layout.addWidget(self.tracks_panel, stretch=0)
         layout.addWidget(self.analysis_panel)
         layout.addWidget(self.results_table)
-        layout.addWidget(self.visual_feedback_panel, stretch=2)
+        layout.addWidget(self.visual_feedback_panel, stretch=1)
         self.setCentralWidget(central)
 
         self._refresh_capture_devices()

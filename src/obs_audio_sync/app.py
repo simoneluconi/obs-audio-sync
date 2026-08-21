@@ -16,7 +16,7 @@ def main() -> int:
     app.setStyleSheet(DARK_STYLESHEET)
 
     window = MainWindow()
-    window.show()
+    window.showMaximized()
 
     return app.exec()
 

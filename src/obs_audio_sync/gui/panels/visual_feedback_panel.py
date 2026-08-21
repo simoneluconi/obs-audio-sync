@@ -48,11 +48,13 @@ class VisualFeedbackPanel(QWidget):
         self.waveform_plot.setLabel("bottom", "Time", units="s")
         self.waveform_plot.setLabel("left", "Amplitude")
         self.waveform_plot.showGrid(x=True, y=True, alpha=0.2)
+        self.waveform_plot.setMinimumHeight(220)
 
         self.correlation_plot = pg.PlotWidget(title="Cross-correlation (peak = estimated delay)")
         self.correlation_plot.setLabel("bottom", "Lag", units="ms")
         self.correlation_plot.setLabel("left", "Normalized correlation")
         self.correlation_plot.showGrid(x=True, y=True, alpha=0.2)
+        self.correlation_plot.setMinimumHeight(220)
 
         layout = QVBoxLayout(self)
         layout.addWidget(self.summary_label)

@@ -8,13 +8,19 @@ from PySide6.QtWidgets import (
     QComboBox,
     QHBoxLayout,
     QLabel,
-    QLineEdit,
     QPushButton,
     QRadioButton,
     QWidget,
 )
 
 from obs_audio_sync.core.models import TrackConfig
+
+# Shared with tracks_panel.py's header row so header labels line up with
+# the actual row widgets below them (a plain "" QLabel has near-zero
+# width, unlike the real widgets it sits above).
+REFERENCE_COLUMN_WIDTH = 90
+STATUS_COLUMN_WIDTH = 110
+REMOVE_COLUMN_WIDTH = 28
 
 _STATUS_STYLES = {
     "idle": ("Not analyzed", "#8a8f98"),
@@ -28,13 +34,9 @@ _STATUS_STYLES = {
 class TrackRowWidget(QWidget):
     remove_requested = Signal(str)  # emits track_id
 
-    def __init__(self, track_id: str, display_name: str = "", parent: QWidget | None = None):
+    def __init__(self, track_id: str, parent: QWidget | None = None):
         super().__init__(parent)
         self.track_id = track_id
-
-        self.name_edit = QLineEdit(display_name or track_id)
-        self.name_edit.setPlaceholderText("Track name")
-        self.name_edit.setMinimumWidth(110)
 
         self.obs_input_combo = QComboBox()
         self.obs_input_combo.setEditable(True)
@@ -47,19 +49,20 @@ class TrackRowWidget(QWidget):
         self.capture_device_combo.setMinimumWidth(180)
 
         self.reference_radio = QRadioButton("Reference")
+        self.reference_radio.setFixedWidth(REFERENCE_COLUMN_WIDTH)
 
         self.status_label = QLabel()
-        self.status_label.setMinimumWidth(110)
+        self.status_label.setFixedWidth(STATUS_COLUMN_WIDTH)
         self.set_status("idle")
 
         self.remove_button = QPushButton("✕")
-        self.remove_button.setFixedWidth(28)
+        self.remove_button.setFixedSize(REMOVE_COLUMN_WIDTH, 28)
+        self.remove_button.setStyleSheet("padding: 0px;")
         self.remove_button.setToolTip("Remove track")
         self.remove_button.clicked.connect(lambda: self.remove_requested.emit(self.track_id))
 
         layout = QHBoxLayout(self)
         layout.setContentsMargins(4, 2, 4, 2)
-        layout.addWidget(self.name_edit)
         layout.addWidget(self.obs_input_combo, stretch=1)
         layout.addWidget(self.capture_device_combo, stretch=1)
         layout.addWidget(self.reference_radio)
@@ -67,16 +70,16 @@ class TrackRowWidget(QWidget):
         layout.addWidget(self.remove_button)
 
     def to_track_config(self) -> TrackConfig:
+        obs_input_name = self.obs_input_combo.currentText().strip()
         return TrackConfig(
             id=self.track_id,
-            display_name=self.name_edit.text().strip() or self.track_id,
-            obs_input_name=self.obs_input_combo.currentText().strip(),
+            display_name=obs_input_name or self.track_id,
+            obs_input_name=obs_input_name,
             capture_device_name=self.capture_device_combo.currentText().strip(),
             is_reference=self.reference_radio.isChecked(),
         )
 
     def load_track_config(self, track: TrackConfig) -> None:
-        self.name_edit.setText(track.display_name)
         self.obs_input_combo.setCurrentText(track.obs_input_name)
         self.capture_device_combo.setCurrentText(track.capture_device_name)
         self.reference_radio.setChecked(track.is_reference)

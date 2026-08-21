@@ -91,8 +91,7 @@ def test_validate_requires_exactly_one_reference(qtbot, tmp_path):
 def test_validate_requires_obs_input_and_capture_device(qtbot, tmp_path):
     window = _make_window(qtbot, tmp_path)
     window._obs_client = object()
-    row = window.tracks_panel.add_track()
-    row.name_edit.setText("PA")
+    window.tracks_panel.add_track()
 
     error = window._validate_ready_to_analyze()
 
@@ -123,9 +122,7 @@ def test_on_connected_updates_panels(qtbot, tmp_path):
 def test_populate_results_table_marks_rejected_and_pending_status(qtbot, tmp_path):
     window = _make_window(qtbot, tmp_path)
     row_ref = window.tracks_panel.add_track()
-    row_ref.name_edit.setText("ref")
     row_other = window.tracks_panel.add_track()
-    row_other.name_edit.setText("noisy")
     ref_id, other_id = row_ref.track_id, row_other.track_id
     window._display_names = {ref_id: "ref", other_id: "noisy"}
 
@@ -164,7 +161,7 @@ def test_analyze_shows_preview_without_applying(qtbot, tmp_path, monkeypatch):
     qtbot.waitUntil(lambda: window.analysis_panel.analyze_button.isEnabled(), timeout=3000)
 
     assert window.results_table.rowCount() == 1
-    assert window.results_table.item(0, 0).text() == track_id
+    assert window.results_table.item(0, 0).text() == "PA Mic"
     assert window._pending_result is not None
     assert window.analysis_panel.apply_button.isEnabled() is True
     # Preview only: no engine instance should have had apply_offsets called.

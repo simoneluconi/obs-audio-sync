@@ -3,14 +3,17 @@ reference track, and broadcast OBS input / capture device options."""
 
 from __future__ import annotations
 
-import itertools
+import uuid
 
 from PySide6.QtWidgets import QButtonGroup, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
 
 from obs_audio_sync.core.models import TrackConfig
-from obs_audio_sync.gui.panels.track_row_widget import TrackRowWidget
-
-_id_counter = itertools.count(1)
+from obs_audio_sync.gui.panels.track_row_widget import (
+    REFERENCE_COLUMN_WIDTH,
+    REMOVE_COLUMN_WIDTH,
+    STATUS_COLUMN_WIDTH,
+    TrackRowWidget,
+)
 
 
 class TracksPanel(QWidget):
@@ -23,8 +26,17 @@ class TracksPanel(QWidget):
         self._last_capture_device_options: list[str] = []
 
         header = QHBoxLayout()
-        for text, stretch in (("Name", 0), ("OBS input", 1), ("Capture device", 1), ("", 0), ("Status", 0), ("", 0)):
+        header_columns = (
+            ("OBS input", 1, None),
+            ("Capture device", 1, None),
+            ("", 0, REFERENCE_COLUMN_WIDTH),
+            ("Status", 0, STATUS_COLUMN_WIDTH),
+            ("", 0, REMOVE_COLUMN_WIDTH),
+        )
+        for text, stretch, fixed_width in header_columns:
             label = QLabel(f"<b>{text}</b>")
+            if fixed_width is not None:
+                label.setFixedWidth(fixed_width)
             header.addWidget(label, stretch=stretch)
 
         self._rows_layout = QVBoxLayout()
@@ -37,11 +49,10 @@ class TracksPanel(QWidget):
         layout.addLayout(header)
         layout.addLayout(self._rows_layout)
         layout.addWidget(add_button)
-        layout.addStretch(1)
 
     def add_track(self, track: TrackConfig | None = None) -> TrackRowWidget:
-        track_id = track.id if track is not None else f"track-{next(_id_counter)}"
-        row = TrackRowWidget(track_id, track.display_name if track is not None else "")
+        track_id = track.id if track is not None else f"track-{uuid.uuid4().hex[:8]}"
+        row = TrackRowWidget(track_id)
         row.remove_requested.connect(self.remove_track)
         self._reference_group.addButton(row.reference_radio)
         row.set_obs_input_options(self._last_obs_input_options)
